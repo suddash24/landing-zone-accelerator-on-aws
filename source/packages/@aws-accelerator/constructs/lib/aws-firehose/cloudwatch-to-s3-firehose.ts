@@ -210,6 +210,7 @@ export class CloudWatchToS3Firehose extends Construct {
         dynamicPartitioningConfiguration: {
           enabled: true,
         },
+        fileExtension: props.firehoseLogExtension,
         errorOutputPrefix: `CloudWatchLogs/processing-failed`,
         encryptionConfiguration: {
           kmsEncryptionConfig: {
@@ -244,10 +245,6 @@ export class CloudWatchToS3Firehose extends Construct {
                   // setting minimum so that lambda function is invoked frequently
                   parameterName: 'BufferIntervalInSeconds',
                   parameterValue: '60',
-                },
-                {
-                  parameterName: 'FirehoseLogExtension',
-                  parameterValue: props.firehoseLogExtension ?? '',
                 },
               ],
             },
