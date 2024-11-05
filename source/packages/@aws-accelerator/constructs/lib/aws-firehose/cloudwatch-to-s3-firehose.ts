@@ -90,6 +90,11 @@ export interface CloudWatchToS3FirehoseProps {
    * CloudWatch Logs Retention in days from global config
    */
   logsRetentionInDaysValue: string;
+  /**
+   *
+   * Log Extension type for firehose-delivered log files in S3 bucket
+   */
+  firehoseLogExtension?: string;
 }
 /**
  * Class to configure CloudWatch replication on logs receiving account
@@ -239,6 +244,10 @@ export class CloudWatchToS3Firehose extends Construct {
                   // setting minimum so that lambda function is invoked frequently
                   parameterName: 'BufferIntervalInSeconds',
                   parameterValue: '60',
+                },
+                {
+                  parameterName: 'FirehoseLogExtension',
+                  parameterValue: props.firehoseLogExtension ?? '',
                 },
               ],
             },

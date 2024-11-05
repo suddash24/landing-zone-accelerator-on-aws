@@ -1040,6 +1040,7 @@ export class LoggingStack extends AcceleratorStack {
         this.acceleratorResourceNames.parameters.firehoseRecordsProcessorFunctionName,
       logsKmsKey: this.cloudwatchKey,
       logsRetentionInDaysValue: this.props.globalConfig.cloudwatchLogRetentionInDays.toString(),
+      firehoseLogExtension: this.props.globalConfig.logging.cloudwatchLogs?.firehose?.fileExtension?.toString(),
     });
 
     if (this.centralLogsBucket) {

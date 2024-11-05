@@ -37,6 +37,8 @@ import {
 
 export async function handler(event: FirehoseTransformationEvent) {
   const firehoseRecordsOutput: FirehoseTransformationResult = { records: [] };
+  const includeLogExtension = event.records[0];
+  console.log(includeLogExtension);
 
   // Parse records
   for (const firehoseRecordInput of event.records) {
