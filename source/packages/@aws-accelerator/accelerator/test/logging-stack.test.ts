@@ -14,7 +14,8 @@
 import { AcceleratorStage } from '../lib/accelerator-stage';
 import { describe } from '@jest/globals';
 import { snapShotTest } from './snapshot-test';
-import { Create } from './accelerator-test-helpers';
+import * as cdk from 'aws-cdk-lib';
+import { Match, Create } from './accelerator-test-helpers';
 
 const testNamePrefix = 'Construct(LoggingStack): ';
 
@@ -39,4 +40,96 @@ describe('LoggingStack', () => {
     testNamePrefix,
     Create.stackProvider(`LogArchive-us-west-2`, [AcceleratorStage.LOGGING, 'aws', 'us-west-2']),
   );
+});
+
+describe('LoggingStack with Firehose fileExtension', () => {
+  let acceleratorTestStacks: AcceleratorSynthStacks;
+  let stack: cdk.Stack;
+
+  beforeEach(() => {
+    acceleratorTestStacks = new AcceleratorSynthStacks(AcceleratorStage.LOGGING, 'aws', 'us-east-1');
+    stack = acceleratorTestStacks.stacks.get(`LogArchive-us-east-1`)!;
+  });
+
+  test('Firehose configuration includes fileExtension', () => {
+    const template = Template.fromStack(stack);
+
+    template.resourceCountIs('AWS::KinesisFirehose::DeliveryStream', 1);
+
+    template.hasResourceProperties('AWS::KinesisFirehose::DeliveryStream', {
+      ExtendedS3DestinationConfiguration: {
+        FileExtension: '.gzip',
+        ProcessingConfiguration: {
+          Enabled: true,
+          Processors: [
+            {
+              Type: 'Lambda',
+              Parameters: Match.arrayWith([
+                {
+                  ParameterName: 'LambdaArn',
+                  ParameterValue: Match.anyValue(),
+                },
+              ]),
+            },
+          ],
+        },
+      },
+    });
+  });
+
+  test('S3 bucket is configured to receive Firehose logs', () => {
+    const template = Template.fromStack(stack);
+
+    template.hasResourceProperties('AWS::S3::Bucket', {
+      VersioningConfiguration: {
+        Status: 'Enabled',
+      },
+    });
+  });
+});
+
+describe('LoggingStack with Firehose fileExtension', () => {
+  let acceleratorTestStacks: AcceleratorSynthStacks;
+  let stack: cdk.Stack;
+
+  beforeEach(() => {
+    acceleratorTestStacks = new AcceleratorSynthStacks(AcceleratorStage.LOGGING, 'aws', 'us-east-1');
+    stack = acceleratorTestStacks.stacks.get(`LogArchive-us-east-1`)!;
+  });
+
+  test('Firehose configuration includes fileExtension', () => {
+    const template = Template.fromStack(stack);
+
+    template.resourceCountIs('AWS::KinesisFirehose::DeliveryStream', 1);
+
+    template.hasResourceProperties('AWS::KinesisFirehose::DeliveryStream', {
+      ExtendedS3DestinationConfiguration: {
+        FileExtension: '.gzip',
+        ProcessingConfiguration: {
+          Enabled: true,
+          Processors: [
+            {
+              Type: 'Lambda',
+              Parameters: Match.arrayWith([
+                {
+                  ParameterName: 'LambdaArn',
+                  ParameterValue: Match.anyValue(),
+                },
+              ]),
+            },
+          ],
+        },
+      },
+    });
+  });
+
+  test('S3 bucket is configured to receive Firehose logs', () => {
+    const template = Template.fromStack(stack);
+
+    template.hasResourceProperties('AWS::S3::Bucket', {
+      VersioningConfiguration: {
+        Status: 'Enabled',
+      },
+    });
+  });
 });
