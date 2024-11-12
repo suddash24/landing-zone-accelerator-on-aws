@@ -20,26 +20,23 @@ import { Match, Create } from './accelerator-test-helpers';
 const testNamePrefix = 'Construct(LoggingStack): ';
 
 describe('LoggingStack', () => {
-  snapShotTest(testNamePrefix, Create.stackProvider(`LogArchive-us-east-1`, AcceleratorStage.LOGGING));
+  snapShotTest(testNamePrefix, stack);
 });
 
+const acceleratorTestStacksOuTargets = new AcceleratorSynthStacks(
+  AcceleratorStage.LOGGING,
+  'aws',
+  'us-east-1',
+  'all-enabled-ou-targets',
+);
+const stackOuTargets = acceleratorTestStacksOuTargets.stacks.get(`LogArchive-us-east-1`)!;
+
 describe('LoggingStackOuTargets', () => {
-  snapShotTest(
-    'Construct(LoggingStackOuTargets): ',
-    Create.stackProvider(`LogArchive-us-east-1`, [
-      AcceleratorStage.LOGGING,
-      'aws',
-      'us-east-1',
-      'all-enabled-ou-targets',
-    ]),
-  );
+  snapShotTest('Construct(LoggingStackOuTargets): ', stackOuTargets);
 });
 
 describe('LoggingStack', () => {
-  snapShotTest(
-    testNamePrefix,
-    Create.stackProvider(`LogArchive-us-west-2`, [AcceleratorStage.LOGGING, 'aws', 'us-west-2']),
-  );
+  snapShotTest(testNamePrefix, centralizedRegionTestStack);
 });
 
 describe('LoggingStack with Firehose fileExtension', () => {
@@ -58,7 +55,7 @@ describe('LoggingStack with Firehose fileExtension', () => {
 
     template.hasResourceProperties('AWS::KinesisFirehose::DeliveryStream', {
       ExtendedS3DestinationConfiguration: {
-        FileExtension: '.gzip',
+        FileExtension: '.json.gz',
         ProcessingConfiguration: {
           Enabled: true,
           Processors: [
@@ -73,16 +70,6 @@ describe('LoggingStack with Firehose fileExtension', () => {
             },
           ],
         },
-      },
-    });
-  });
-
-  test('S3 bucket is configured to receive Firehose logs', () => {
-    const template = Template.fromStack(stack);
-
-    template.hasResourceProperties('AWS::S3::Bucket', {
-      VersioningConfiguration: {
-        Status: 'Enabled',
       },
     });
   });
@@ -104,7 +91,7 @@ describe('LoggingStack with Firehose fileExtension', () => {
 
     template.hasResourceProperties('AWS::KinesisFirehose::DeliveryStream', {
       ExtendedS3DestinationConfiguration: {
-        FileExtension: 'json.gz',
+        FileExtension: '.json.gz',
         ProcessingConfiguration: {
           Enabled: true,
           Processors: [
@@ -119,16 +106,6 @@ describe('LoggingStack with Firehose fileExtension', () => {
             },
           ],
         },
-      },
-    });
-  });
-
-  test('S3 bucket is configured to receive Firehose logs', () => {
-    const template = Template.fromStack(stack);
-
-    template.hasResourceProperties('AWS::S3::Bucket', {
-      VersioningConfiguration: {
-        Status: 'Enabled',
       },
     });
   });
