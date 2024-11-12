@@ -168,7 +168,7 @@ logging:
 
   assetBucket:
     importedBucket:
-      name: aws-accelerator-imported-all-enabled-${ACCOUNT_ID}-${REGION}
+      name: aws-accelerator-imported-all-enabled-${ASSET_BUCKET_ACCOUNT_ID}-${ASSET_BUCKET_REGION}
       applyAcceleratorManagedBucketPolicy: true
       createAcceleratorManagedKey: true
     # s3ResourcePolicyAttachments:
@@ -192,7 +192,7 @@ logging:
     lifecycleRules: []
   elbLogBucket:
     importedBucket:
-      name: existing-elb-logs-bucket-${ACCOUNT_ID}-${REGION}
+      name: existing-elb-logs-bucket-${ELB_LOG_BUCKET_ACCOUNT_ID}-${REGION}
       applyAcceleratorManagedBucketPolicy: true
     # customPolicyOverrides:
     #   policy: bucket-policies/full-elb-log-bucket.json
