@@ -104,7 +104,7 @@ describe('LoggingStack with Firehose fileExtension', () => {
 
     template.hasResourceProperties('AWS::KinesisFirehose::DeliveryStream', {
       ExtendedS3DestinationConfiguration: {
-        FileExtension: '.gzip',
+        FileExtension: 'json.gz',
         ProcessingConfiguration: {
           Enabled: true,
           Processors: [
