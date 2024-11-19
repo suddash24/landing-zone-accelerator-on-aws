@@ -14,99 +14,29 @@
 import { AcceleratorStage } from '../lib/accelerator-stage';
 import { describe } from '@jest/globals';
 import { snapShotTest } from './snapshot-test';
-import * as cdk from 'aws-cdk-lib';
-import { Match, Create } from './accelerator-test-helpers';
+import { Create } from './accelerator-test-helpers';
 
 const testNamePrefix = 'Construct(LoggingStack): ';
 
 describe('LoggingStack', () => {
-  snapShotTest(testNamePrefix, stack);
+  snapShotTest(testNamePrefix, Create.stackProvider(`LogArchive-us-east-1`, AcceleratorStage.LOGGING));
 });
 
-const acceleratorTestStacksOuTargets = new AcceleratorSynthStacks(
-  AcceleratorStage.LOGGING,
-  'aws',
-  'us-east-1',
-  'all-enabled-ou-targets',
-);
-const stackOuTargets = acceleratorTestStacksOuTargets.stacks.get(`LogArchive-us-east-1`)!;
-
 describe('LoggingStackOuTargets', () => {
-  snapShotTest('Construct(LoggingStackOuTargets): ', stackOuTargets);
+  snapShotTest(
+    'Construct(LoggingStackOuTargets): ',
+    Create.stackProvider(`LogArchive-us-east-1`, [
+      AcceleratorStage.LOGGING,
+      'aws',
+      'us-east-1',
+      'all-enabled-ou-targets',
+    ]),
+  );
 });
 
 describe('LoggingStack', () => {
-  snapShotTest(testNamePrefix, centralizedRegionTestStack);
-});
-
-describe('LoggingStack with Firehose fileExtension', () => {
-  let acceleratorTestStacks: AcceleratorSynthStacks;
-  let stack: cdk.Stack;
-
-  beforeEach(() => {
-    acceleratorTestStacks = new AcceleratorSynthStacks(AcceleratorStage.LOGGING, 'aws', 'us-east-1');
-    stack = acceleratorTestStacks.stacks.get(`LogArchive-us-east-1`)!;
-  });
-
-  test('Firehose configuration includes fileExtension', () => {
-    const template = Template.fromStack(stack);
-
-    template.resourceCountIs('AWS::KinesisFirehose::DeliveryStream', 1);
-
-    template.hasResourceProperties('AWS::KinesisFirehose::DeliveryStream', {
-      ExtendedS3DestinationConfiguration: {
-        FileExtension: '.json.gz',
-        ProcessingConfiguration: {
-          Enabled: true,
-          Processors: [
-            {
-              Type: 'Lambda',
-              Parameters: Match.arrayWith([
-                {
-                  ParameterName: 'LambdaArn',
-                  ParameterValue: Match.anyValue(),
-                },
-              ]),
-            },
-          ],
-        },
-      },
-    });
-  });
-});
-
-describe('LoggingStack with Firehose fileExtension', () => {
-  let acceleratorTestStacks: AcceleratorSynthStacks;
-  let stack: cdk.Stack;
-
-  beforeEach(() => {
-    acceleratorTestStacks = new AcceleratorSynthStacks(AcceleratorStage.LOGGING, 'aws', 'us-east-1');
-    stack = acceleratorTestStacks.stacks.get(`LogArchive-us-east-1`)!;
-  });
-
-  test('Firehose configuration includes fileExtension', () => {
-    const template = Template.fromStack(stack);
-
-    template.resourceCountIs('AWS::KinesisFirehose::DeliveryStream', 1);
-
-    template.hasResourceProperties('AWS::KinesisFirehose::DeliveryStream', {
-      ExtendedS3DestinationConfiguration: {
-        FileExtension: '.json.gz',
-        ProcessingConfiguration: {
-          Enabled: true,
-          Processors: [
-            {
-              Type: 'Lambda',
-              Parameters: Match.arrayWith([
-                {
-                  ParameterName: 'LambdaArn',
-                  ParameterValue: Match.anyValue(),
-                },
-              ]),
-            },
-          ],
-        },
-      },
-    });
-  });
+  snapShotTest(
+    testNamePrefix,
+    Create.stackProvider(`LogArchive-us-west-2`, [AcceleratorStage.LOGGING, 'aws', 'us-west-2']),
+  );
 });
