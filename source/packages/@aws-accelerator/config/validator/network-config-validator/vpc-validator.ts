@@ -2573,6 +2573,7 @@ export class VpcValidator {
   private validateSubnetRouteTables(vpcItem: VpcConfig | VpcTemplatesConfig, errors: string[]) {
     const tableNames: string[] = [];
     vpcItem.routeTables?.forEach(routeTable => tableNames.push(routeTable.name));
+    console.log('Table Names: ' + tableNames);
 
     vpcItem.subnets?.forEach(subnet => {
       if (subnet.routeTable && !tableNames.includes(subnet.routeTable)) {
