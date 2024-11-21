@@ -296,15 +296,19 @@ export class LoggingStack extends AcceleratorStack {
    * @returns
    */
   private getElbAccountId() {
+    console.log('Entered ELB accounts');
     let elbAccountId = undefined;
     if (AcceleratorElbRootAccounts.get(cdk.Stack.of(this).region)) {
       elbAccountId = AcceleratorElbRootAccounts.get(cdk.Stack.of(this).region);
+      console.log('Inside ELB Root Accounts: ' + elbAccountId);
     }
     if (this.props.networkConfig.elbAccountIds?.find(item => item.region === cdk.Stack.of(this).region)) {
       elbAccountId = this.props.networkConfig.elbAccountIds?.find(
         item => item.region === cdk.Stack.of(this).region,
       )!.accountId;
+      console.log('Inside Second condition: ' + elbAccountId);
     }
+    console.log('ELB Account ID: ' + elbAccountId);
 
     return elbAccountId;
   }
