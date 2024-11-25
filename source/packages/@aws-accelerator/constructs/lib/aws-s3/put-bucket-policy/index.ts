@@ -36,6 +36,9 @@ export async function handler(event: CloudFormationCustomResourceEvent): Promise
     }
   | undefined
 > {
+  console.log('Event Start');
+  console.log(event);
+  console.log('Event End');
   const partition = event.ServiceToken.split(':')[1];
   const sourceAccount: string = event.ResourceProperties['sourceAccount'];
   const bucketType: AcceleratorImportedBucketType = event.ResourceProperties['bucketType'];
