@@ -293,7 +293,7 @@ function generateBucketPolicy(
 
         if (elbAccountId) {
           elbPrincipal = {
-            AWS: [`arn:${partition}:iam::${sourceAccount}:root`],
+            AWS: [`arn:${partition}:iam::${elbAccountId}:root`],
           };
         }
 
