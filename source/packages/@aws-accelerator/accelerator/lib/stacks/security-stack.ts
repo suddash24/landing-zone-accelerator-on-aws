@@ -23,6 +23,7 @@ import {
   MacieExportConfigClassification,
   PasswordPolicy,
   SecurityHubStandards,
+  SecurityLakeSession,
   ConfigAggregation,
 } from '@aws-accelerator/constructs';
 
@@ -80,6 +81,11 @@ export class SecurityStack extends AcceleratorStack {
     // SecurityHub configuration
     //
     this.configureSecurityHub();
+
+    //
+    // SecurityHub configuration
+    //
+    this.configureSecurityLake();
 
     //
     // Ebs Default Volume Encryption configuration
@@ -241,6 +247,23 @@ export class SecurityStack extends AcceleratorStack {
           logRetentionInDays: this.props.globalConfig.cloudwatchLogRetentionInDays,
         });
       }
+    }
+  }
+
+  /**
+   * Function to configure SecurityLake
+   */
+  private configureSecurityLake() {
+    if (this.validateExcludeRegionsAndDeploymentTargets(this.securityHubConfig)) {
+      // Validate Delegated Admin Account name is part of account config
+      this.validateDelegatedAdminAccountName('SecurityLake');
+      new SecurityLakeSession(this, 'SecurityLakeSession', {
+        securityLakeRoleArn: '',
+        adminAccountId: 'Audit',
+        regions: ['us-east-1'],
+        rollupRegions: [],
+        accounts: this.props.accountsConfig.accountIds,
+      });
     }
   }
 
