@@ -15,6 +15,7 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
 export interface SecurityLakeProps {
+  readonly securityLakeRoleArn: string;
   readonly adminAccountId: string;
   readonly regions: string[];
   readonly rollupRegions: string[];
@@ -22,10 +23,14 @@ export interface SecurityLakeProps {
 }
 
 export class SecurityLakeSession extends Construct {
+  props: SecurityLakeProps;
   constructor(scope: Construct, id: string, props: SecurityLakeProps) {
     super(scope, id);
+    this.props = props;
 
-    // const securityLakeAdminAccount = props.adminAccountId;
+    // const delegatedAdminAccount = "Audit";
+    // const securityLakeAdminAccountId = props.accountsConfig.getAccountId(delegatedAdminAccount);
+    // this.enableIdentityCenterDelegatedAdminAccount(securityLakeAdminAccountId);
 
     const securityLakeKey = new cdk.aws_kms.Key(this, 'SecurityLakeKey', {
       enableKeyRotation: true,
@@ -52,7 +57,7 @@ export class SecurityLakeSession extends Construct {
       lifecycleConfiguration: lifecycleRule,
       replicationConfiguration: {
         regions: props.rollupRegions,
-        roleArn: 'roleArn', // This parameter uses the IAM role created that is managed by Security Lake, to ensure the replication setting is correct.
+        roleArn: props.securityLakeRoleArn, // This parameter uses the IAM role created that is managed by Security Lake, to ensure the replication setting is correct.
       },
     });
 
@@ -84,6 +89,7 @@ export class SecurityLakeSession extends Construct {
     //     }],
     //   });
   }
+
   createAwsLogSources(sources: string[], dataLakeArn: string, accounts: string[]) {
     const logsources: cdk.aws_securitylake.CfnAwsLogSource[] = [];
     for (const source of sources) {
