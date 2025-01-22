@@ -420,6 +420,70 @@ export class CloudWatchLogsConfig implements i.ICloudWatchLogsConfig {
   readonly firehose: CloudWatchFirehoseConfig | undefined = undefined;
 }
 
+export class RegionConfig implements i.IRegionConfig {
+  readonly name: string | undefined = undefined;
+  readonly regions: t.Region[] | undefined = undefined;
+}
+
+export class LifecycleTransition implements i.ILifecycleTransition {
+  readonly storageClass: string | undefined = undefined;
+  readonly transitionAfter: number | undefined = undefined;
+}
+
+export class LifecycleExpiration implements i.ILifecycleExpiration {
+  readonly days: number | undefined = undefined;
+}
+
+export class LifecycleRule implements i.ILifecycleRule {
+  readonly id: string | undefined = undefined;
+  readonly enabled: boolean | undefined = undefined;
+  readonly transitions: LifecycleTransition[] | undefined = undefined;
+  readonly expiration: LifecycleExpiration | undefined = undefined;
+}
+
+export class LogSource implements i.ILogSource {
+  readonly id: string | undefined = undefined;
+  readonly version: string | undefined = undefined;
+  readonly enabled: boolean | undefined = undefined;
+}
+
+export class Source implements i.ISource {
+  awsLogSource:
+    | {
+        sourceName: string;
+        sourceVersion: string;
+      }
+    | undefined = undefined;
+  customLogSource:
+    | {
+        sourceName: string;
+        sourceVersion: string;
+      }
+    | undefined = undefined;
+}
+
+export class SubscriberIdentity implements i.ISubscriberIdentity {
+  readonly externalId: string | undefined = undefined;
+  readonly principal: string | undefined = undefined;
+}
+
+export class Subscription implements i.ISubscription {
+  readonly accessTypes: ('S3' | 'LAKEFORMATION')[] | undefined = undefined;
+  readonly dataLakeArn: string | undefined;
+  readonly sources: Source[] | undefined = undefined;
+  readonly subscriberDescription: string | undefined = undefined;
+  readonly subscriberIdentity: SubscriberIdentity | undefined = undefined;
+  readonly subscriberName: string | undefined = undefined;
+}
+
+export class SecurityLakeConfig implements i.ISecurityLakeConfig {
+  readonly enable: boolean | undefined = undefined;
+  readonly regions: RegionConfig[] | undefined = undefined;
+  readonly lifecycleRules: LifecycleRule[] | undefined = undefined;
+  readonly logSources: LogSource[] | undefined = undefined;
+  readonly subscriptions: Subscription[] | undefined = undefined;
+}
+
 export class LoggingConfig implements i.ILoggingConfig {
   readonly account = 'LogArchive';
   readonly centralizedLoggingRegion: undefined | string = undefined;
@@ -430,6 +494,7 @@ export class LoggingConfig implements i.ILoggingConfig {
   readonly centralLogBucket: CentralLogBucketConfig | undefined = undefined;
   readonly elbLogBucket: ElbLogBucketConfig | undefined = undefined;
   readonly cloudwatchLogs: CloudWatchLogsConfig | undefined = undefined;
+  readonly securityLake: SecurityLakeConfig | undefined = undefined;
 }
 
 export class CostAndUsageReportConfig implements i.ICostAndUsageReportConfig {

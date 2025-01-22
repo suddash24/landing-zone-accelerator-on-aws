@@ -12,6 +12,7 @@
  */
 
 import * as t from '../common/types';
+import { Region } from '../common/types';
 /**
  * {@link IGlobalConfig} / {@link IControlTowerConfig} / {@link IControlTowerLandingZoneConfig} / {@link IControlTowerLandingZoneLoggingConfig}
  *
@@ -1236,6 +1237,208 @@ export interface ICloudWatchLogsConfig {
 }
 
 /**
+ * Accelerator global Security lake Logs lifecycle rule transition
+ */
+export interface ILifecycleTransition {
+  /**
+   * Storage class for transition
+   */
+  storageClass: string | undefined;
+  /**
+   * Number of days after which to transition
+   */
+  transitionAfter: number | undefined;
+}
+
+/**
+ * Accelerator global Security lake Logs lifecycle rule expiration
+ */
+export interface ILifecycleExpiration {
+  /**
+   * Number of days after which to expire
+   */
+  days: number | undefined;
+}
+
+/**
+ * Accelerator global Security lake Logs lifecycle rule configuration
+ */
+export interface ILifecycleRule {
+  /**
+   * Rule identifier
+   */
+  id: string | undefined;
+  /**
+   * Enable rule
+   */
+  enabled: boolean | undefined;
+  /**
+   * Declaration of S3 transitions
+   */
+  transitions: ILifecycleTransition[] | undefined;
+  /**
+   * Object expiration configuration
+   */
+  expiration: ILifecycleExpiration | undefined;
+}
+
+/**
+ * Security Lake Supported Log Sources
+ */
+export interface ILogSource {
+  /**
+   * Log source identifier
+   */
+  id: string | undefined;
+  /**
+   * Log source version
+   */
+  version: string | undefined;
+  /**
+   * Enable log source
+   */
+  enabled: boolean | undefined;
+}
+
+/**
+ * Security Lake Region configuration
+ */
+export interface IRegionConfig {
+  /**
+   * Name of the AWS Region
+   */
+  name: string | undefined;
+  /**
+   * List of regions to be rolled up into this region
+   */
+  rollupRegions?: Region[] | undefined;
+}
+
+/**
+ * Security Lake Source configuration
+ */
+export interface ISource {
+  /**
+   * AWS supported automatic log sources
+   */
+  awsLogSource:
+    | {
+        sourceName: string;
+        sourceVersion: string;
+      }
+    | undefined;
+  /**
+   * Custom log sources
+   */
+  customLogSource:
+    | {
+        sourceName: string;
+        sourceVersion: string;
+      }
+    | undefined;
+}
+
+/**
+ * Security Lake Subscriber Identity
+ */
+export interface ISubscriberIdentity {
+  /**
+   * AWS account ID
+   */
+  externalId: string | undefined;
+  /**
+   * Principals can include accounts, users, roles, federated users, or AWS services
+   */
+  principal: string | undefined;
+}
+
+export interface ISubscription {
+  /**
+   * The types of access that you want to give subscribers to the Security Lake data.
+   */
+  accessTypes: ('S3' | 'LAKEFORMATION')[] | undefined;
+
+  /**
+   * The ARN of the Security Lake data lake.
+   */
+  dataLakeArn: string | undefined;
+
+  /**
+   * The data source types subscribed to.
+   */
+  sources: ISource[] | undefined;
+
+  /**
+   * A description for the subscriber.
+   */
+  subscriberDescription?: string | undefined;
+
+  /**
+   * The identity that will be used to access the data.
+   */
+  subscriberIdentity: ISubscriberIdentity | undefined;
+
+  /**
+   * The name of the subscriber.
+   */
+  subscriberName: string | undefined;
+}
+
+/**
+ * *{@link GlobalConfig} / {@link LoggingConfig}*
+ *
+ * @description
+ * Global logging configuration
+ *
+ * @example
+ * ```
+ * securityLake:
+    enable: true
+    regions:
+      - name: us-east-1
+        rollupRegions:
+          - us-east-1
+    lifecycleRules:
+    - id: StandardRetention
+      enabled: true
+      transitions:
+        - storageClass: GLACIER_IR
+          transitionAfter: 90
+      expiration:
+        days: 365
+    subscriptions: Subscription[]
+    logSources: 
+      - id: ROUTE53
+        version: 2.0
+        enabled: true
+ * ```
+ */
+
+export interface ISecurityLakeConfig {
+  /**
+   *
+   * Enable Security Lake
+   */
+  enable: boolean | undefined;
+  /**
+   * Declaration of Security Lake Region configurations
+   */
+  regions: IRegionConfig[] | undefined;
+  /**
+   * Declaration of S3 Lifecycle rules
+   */
+  lifecycleRules: ILifecycleRule[] | undefined;
+  /**
+   * Declaration of Security Lake log source configurations
+   */
+  logSources: ILogSource[] | undefined;
+  /**
+   * Declaration of Security Lake SNS topic subscriptions
+   */
+  subscriptions: ISubscription[] | undefined;
+}
+
+/**
  * *{@link GlobalConfig} / {@link LoggingConfig}*
  *
  * @description
@@ -1295,6 +1498,10 @@ export interface ILoggingConfig {
    * CloudWatch Logging configuration.
    */
   readonly cloudwatchLogs?: ICloudWatchLogsConfig;
+  /**
+   * Security Lake Configuration
+   */
+  readonly securityLake?: ISecurityLakeConfig;
 }
 
 /**
