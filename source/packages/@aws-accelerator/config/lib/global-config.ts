@@ -434,7 +434,7 @@ export class LifecycleExpiration implements i.ILifecycleExpiration {
   readonly days: number | undefined = undefined;
 }
 
-export class LifecycleRule implements i.ILifecycleRule {
+export class SLLifecycleRule implements i.ISLLifecycleRule {
   readonly id: string | undefined = undefined;
   readonly enabled: boolean | undefined = undefined;
   readonly transitions: LifecycleTransition[] | undefined = undefined;
@@ -479,7 +479,7 @@ export class Subscription implements i.ISubscription {
 export class SecurityLakeConfig implements i.ISecurityLakeConfig {
   readonly enable: boolean | undefined = undefined;
   readonly regions: RegionConfig[] | undefined = undefined;
-  readonly lifecycleRules: LifecycleRule[] | undefined = undefined;
+  readonly lifecycleRules: SLLifecycleRule[] | undefined = undefined;
   readonly logSources: LogSource[] | undefined = undefined;
   readonly subscriptions: Subscription[] | undefined = undefined;
 }

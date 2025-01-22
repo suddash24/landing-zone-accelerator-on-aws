@@ -1263,7 +1263,7 @@ export interface ILifecycleExpiration {
 /**
  * Accelerator global Security lake Logs lifecycle rule configuration
  */
-export interface ILifecycleRule {
+export interface ISLLifecycleRule {
   /**
    * Rule identifier
    */
