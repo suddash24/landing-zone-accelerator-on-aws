@@ -1427,7 +1427,7 @@ export interface ISecurityLakeConfig {
   /**
    * Declaration of S3 Lifecycle rules
    */
-  lifecycleRules: ILifecycleRule[] | undefined;
+  lifecycleRules: ISLLifecycleRule[] | undefined;
   /**
    * Declaration of Security Lake log source configurations
    */
