@@ -1263,15 +1263,7 @@ export interface ILifecycleExpiration {
 /**
  * Accelerator global Security lake Logs lifecycle rule configuration
  */
-export interface ISLLifecycleRule {
-  /**
-   * Rule identifier
-   */
-  id: string | undefined;
-  /**
-   * Enable rule
-   */
-  enabled: boolean | undefined;
+export interface ISecurityLakeLifecycleRule {
   /**
    * Declaration of S3 transitions
    */
@@ -1285,7 +1277,7 @@ export interface ISLLifecycleRule {
 /**
  * Security Lake Supported Log Sources
  */
-export interface ILogSource {
+export interface ISecurityLakeLogSource {
   /**
    * Log source identifier
    */
@@ -1341,7 +1333,7 @@ export interface ISource {
 /**
  * Security Lake Subscriber Identity
  */
-export interface ISubscriberIdentity {
+export interface ISecurityLakeSubscriberIdentity {
   /**
    * AWS account ID
    */
@@ -1352,7 +1344,7 @@ export interface ISubscriberIdentity {
   principal: string | undefined;
 }
 
-export interface ISubscription {
+export interface ISecurityLakeSubscription {
   /**
    * The types of access that you want to give subscribers to the Security Lake data.
    */
@@ -1366,7 +1358,7 @@ export interface ISubscription {
   /**
    * The data source types subscribed to.
    */
-  sources: ISource[] | undefined;
+  sources: ISecurityLakeLogSource[] | undefined;
 
   /**
    * A description for the subscriber.
@@ -1376,7 +1368,7 @@ export interface ISubscription {
   /**
    * The identity that will be used to access the data.
    */
-  subscriberIdentity: ISubscriberIdentity | undefined;
+  subscriberIdentity: ISecurityLakeSubscriberIdentity | undefined;
 
   /**
    * The name of the subscriber.
@@ -1421,21 +1413,25 @@ export interface ISecurityLakeConfig {
    */
   enable: boolean | undefined;
   /**
+   * Delegated Admin Account
+   */
+  delegatedAdminAccount: string;
+  /**
    * Declaration of Security Lake Region configurations
    */
   regions: IRegionConfig[] | undefined;
   /**
    * Declaration of S3 Lifecycle rules
    */
-  lifecycleRules: ISLLifecycleRule[] | undefined;
+  lifecycleRules: ISecurityLakeLifecycleRule[] | undefined;
   /**
    * Declaration of Security Lake log source configurations
    */
-  logSources: ILogSource[] | undefined;
+  logSources: ISecurityLakeLogSource[] | undefined;
   /**
    * Declaration of Security Lake SNS topic subscriptions
    */
-  subscriptions: ISubscription[] | undefined;
+  subscriptions: ISecurityLakeSubscription[] | undefined;
 }
 
 /**

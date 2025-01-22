@@ -431,57 +431,41 @@ export class LifecycleTransition implements i.ILifecycleTransition {
 }
 
 export class LifecycleExpiration implements i.ILifecycleExpiration {
-  readonly days: number | undefined = undefined;
+  readonly days: number = 0;
 }
 
-export class SLLifecycleRule implements i.ISLLifecycleRule {
-  readonly id: string | undefined = undefined;
-  readonly enabled: boolean | undefined = undefined;
+export class SecurityLakeLifecycleRule implements i.ISecurityLakeLifecycleRule {
   readonly transitions: LifecycleTransition[] | undefined = undefined;
   readonly expiration: LifecycleExpiration | undefined = undefined;
 }
 
-export class LogSource implements i.ILogSource {
+export class SecurityLakeLogSource implements i.ISecurityLakeLogSource {
   readonly id: string | undefined = undefined;
   readonly version: string | undefined = undefined;
   readonly enabled: boolean | undefined = undefined;
 }
 
-export class Source implements i.ISource {
-  awsLogSource:
-    | {
-        sourceName: string;
-        sourceVersion: string;
-      }
-    | undefined = undefined;
-  customLogSource:
-    | {
-        sourceName: string;
-        sourceVersion: string;
-      }
-    | undefined = undefined;
-}
-
-export class SubscriberIdentity implements i.ISubscriberIdentity {
+export class SecurityLakeSubscriberIdentity implements i.ISecurityLakeSubscriberIdentity {
   readonly externalId: string | undefined = undefined;
   readonly principal: string | undefined = undefined;
 }
 
-export class Subscription implements i.ISubscription {
+export class SecurityLakeSubscription implements i.ISecurityLakeSubscription {
   readonly accessTypes: ('S3' | 'LAKEFORMATION')[] | undefined = undefined;
   readonly dataLakeArn: string | undefined;
-  readonly sources: Source[] | undefined = undefined;
+  readonly sources: SecurityLakeLogSource[] | undefined = undefined;
   readonly subscriberDescription: string | undefined = undefined;
-  readonly subscriberIdentity: SubscriberIdentity | undefined = undefined;
+  readonly subscriberIdentity: SecurityLakeSubscriberIdentity | undefined = undefined;
   readonly subscriberName: string | undefined = undefined;
 }
 
 export class SecurityLakeConfig implements i.ISecurityLakeConfig {
   readonly enable: boolean | undefined = undefined;
+  readonly delegatedAdminAccount: string = 'LogArchive';
   readonly regions: RegionConfig[] | undefined = undefined;
-  readonly lifecycleRules: SLLifecycleRule[] | undefined = undefined;
-  readonly logSources: LogSource[] | undefined = undefined;
-  readonly subscriptions: Subscription[] | undefined = undefined;
+  readonly lifecycleRules: SecurityLakeLifecycleRule[] | undefined = undefined;
+  readonly logSources: SecurityLakeLogSource[] | undefined = undefined;
+  readonly subscriptions: SecurityLakeSubscription[] | undefined = undefined;
 }
 
 export class LoggingConfig implements i.ILoggingConfig {
