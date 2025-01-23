@@ -1307,30 +1307,6 @@ export interface IRegionConfig {
 }
 
 /**
- * Security Lake Source configuration
- */
-export interface ISource {
-  /**
-   * AWS supported automatic log sources
-   */
-  awsLogSource:
-    | {
-        sourceName: string;
-        sourceVersion: string;
-      }
-    | undefined;
-  /**
-   * Custom log sources
-   */
-  customLogSource:
-    | {
-        sourceName: string;
-        sourceVersion: string;
-      }
-    | undefined;
-}
-
-/**
  * Security Lake Subscriber Identity
  */
 export interface ISecurityLakeSubscriberIdentity {
