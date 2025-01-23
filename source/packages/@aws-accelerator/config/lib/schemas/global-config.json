@@ -1068,6 +1068,17 @@
       },
       "type": "object"
     },
+    "ILifecycleExpiration": {
+      "additionalProperties": false,
+      "description": "Accelerator global Security lake Logs lifecycle rule expiration",
+      "properties": {
+        "days": {
+          "description": "Number of days after which to expire",
+          "type": "number"
+        }
+      },
+      "type": "object"
+    },
     "ILifecycleRule": {
       "additionalProperties": false,
       "description": "S3 bucket life cycle rules object.",
@@ -1118,6 +1129,21 @@
       },
       "type": "object"
     },
+    "ILifecycleTransition": {
+      "additionalProperties": false,
+      "description": "Accelerator global Security lake Logs lifecycle rule transition",
+      "properties": {
+        "storageClass": {
+          "description": "Storage class for transition",
+          "type": "string"
+        },
+        "transitionAfter": {
+          "description": "Number of days after which to transition",
+          "type": "number"
+        }
+      },
+      "type": "object"
+    },
     "ILoggingConfig": {
       "additionalProperties": false,
       "description": "Global logging configuration",
@@ -1153,6 +1179,10 @@
         "elbLogBucket": {
           "$ref": "#/definitions/IElbLogBucketConfig",
           "description": "Declaration of a (S3 Bucket) Lifecycle rule configuration."
+        },
+        "securityLake": {
+          "$ref": "#/definitions/ISecurityLakeConfig",
+          "description": "Security Lake Configuration"
         },
         "sessionManager": {
           "$ref": "#/definitions/ISessionManagerConfig",
@@ -1239,6 +1269,24 @@
       ],
       "type": "object"
     },
+    "IRegionConfig": {
+      "additionalProperties": false,
+      "description": "Security Lake Region configuration",
+      "properties": {
+        "name": {
+          "description": "Name of the AWS Region",
+          "type": "string"
+        },
+        "rollupRegions": {
+          "description": "List of regions to be rolled up into this region",
+          "items": {
+            "$ref": "#/definitions/Region"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
     "IReportConfig": {
       "additionalProperties": false,
       "description": "Accelerator report configuration",
@@ -1296,6 +1344,144 @@
           "$ref": "#/definitions/IS3EncryptionConfig",
           "default": "undefined",
           "description": "S3 encryption configuration."
+        }
+      },
+      "type": "object"
+    },
+    "ISecurityLakeConfig": {
+      "additionalProperties": false,
+      "description": "Global logging configuration",
+      "properties": {
+        "delegatedAdminAccount": {
+          "description": "Delegated Admin Account",
+          "type": "string"
+        },
+        "enable": {
+          "description": "Enable Security Lake",
+          "type": "boolean"
+        },
+        "lifecycleRules": {
+          "description": "Declaration of S3 Lifecycle rules",
+          "items": {
+            "$ref": "#/definitions/ISecurityLakeLifecycleRule"
+          },
+          "type": "array"
+        },
+        "logSources": {
+          "description": "Declaration of Security Lake log source configurations",
+          "items": {
+            "$ref": "#/definitions/ISecurityLakeLogSource"
+          },
+          "type": "array"
+        },
+        "regions": {
+          "description": "Declaration of Security Lake Region configurations",
+          "items": {
+            "$ref": "#/definitions/IRegionConfig"
+          },
+          "type": "array"
+        },
+        "subscriptions": {
+          "description": "Declaration of Security Lake SNS topic subscriptions",
+          "items": {
+            "$ref": "#/definitions/ISecurityLakeSubscription"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "delegatedAdminAccount"
+      ],
+      "type": "object"
+    },
+    "ISecurityLakeLifecycleRule": {
+      "additionalProperties": false,
+      "description": "Accelerator global Security lake Logs lifecycle rule configuration",
+      "properties": {
+        "expiration": {
+          "$ref": "#/definitions/ILifecycleExpiration",
+          "description": "Object expiration configuration"
+        },
+        "transitions": {
+          "description": "Declaration of S3 transitions",
+          "items": {
+            "$ref": "#/definitions/ILifecycleTransition"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "ISecurityLakeLogSource": {
+      "additionalProperties": false,
+      "description": "Security Lake Supported Log Sources",
+      "properties": {
+        "enabled": {
+          "description": "Enable log source",
+          "type": "boolean"
+        },
+        "id": {
+          "description": "Log source identifier",
+          "type": "string"
+        },
+        "version": {
+          "description": "Log source version",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ISecurityLakeSubscriberIdentity": {
+      "additionalProperties": false,
+      "description": "Security Lake Subscriber Identity",
+      "properties": {
+        "externalId": {
+          "description": "AWS account ID",
+          "type": "string"
+        },
+        "principal": {
+          "description": "Principals can include accounts, users, roles, federated users, or AWS services",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ISecurityLakeSubscription": {
+      "additionalProperties": false,
+      "properties": {
+        "accessTypes": {
+          "description": "The types of access that you want to give subscribers to the Security Lake data.",
+          "items": {
+            "enum": [
+              "S3",
+              "LAKEFORMATION"
+            ],
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "dataLakeArn": {
+          "description": "The ARN of the Security Lake data lake.",
+          "type": "string"
+        },
+        "sources": {
+          "description": "The data source types subscribed to.",
+          "items": {
+            "$ref": "#/definitions/ISecurityLakeLogSource"
+          },
+          "type": "array"
+        },
+        "subscriberDescription": {
+          "description": "A description for the subscriber.",
+          "type": "string"
+        },
+        "subscriberIdentity": {
+          "$ref": "#/definitions/ISecurityLakeSubscriberIdentity",
+          "description": "The identity that will be used to access the data."
+        },
+        "subscriberName": {
+          "description": "The name of the subscriber.",
+          "type": "string"
         }
       },
       "type": "object"
