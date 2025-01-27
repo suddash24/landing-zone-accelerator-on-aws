@@ -1363,7 +1363,7 @@ export interface ISecurityLakeSubscription {
  * securityLake:
     enable: true
     regions:
-      - name: us-east-1
+      - us-east-1
         rollupRegions:
           - us-east-1
     lifecycleRules:

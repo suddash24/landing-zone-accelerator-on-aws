@@ -759,11 +759,11 @@ export class GlobalConfigValidator {
       'ROUTE53',
       'SH_FINDINGS',
       'S3_DATA',
-      // 'LAMBDA_EXECUTION',
-      // 'CLOUD_TRAIL_MGMT',
-      // 'VPC_FLOW',
-      // 'EKS_AUDIT',
-      // 'WAF'
+      'LAMBDA_EXECUTION',
+      'CLOUD_TRAIL_MGMT',
+      'VPC_FLOW',
+      'EKS_AUDIT',
+      'WAF',
     ];
 
     if (!values.logging || !values.logging.securityLake || !values.logging.securityLake.logSources) {

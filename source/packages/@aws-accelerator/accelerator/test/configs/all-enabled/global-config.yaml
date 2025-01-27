@@ -253,10 +253,8 @@ logging:
     enable: true
     delegatedAdminAccount: LogArchive
     regions:
-      - us-east-1
-      - us-west-2
-    
-    # Lifecycle rules following ILifecycleRule schema
+      - name: us-east-1
+      - name: us-west-2
     lifecycleRules:
       - id: security-lake-lifecycle
         abortIncompleteMultipartUpload:
@@ -305,15 +303,6 @@ logging:
           - id: CLOUD_TRAIL_MGMT
             version: "1.0"
             enabled: true
-
-    # Optional custom policy overrides
-    customPolicyOverrides:
-      s3Policy: security-lake-bucket-policy.json
-      kmsPolicy: security-lake-kms-policy.json
-
-    # Optional S3 resource policy attachments
-    s3ResourcePolicyAttachments:
-      - policy: security-lake-additional-policy.json
 
   sessionManager:
     sendToCloudWatchLogs: false

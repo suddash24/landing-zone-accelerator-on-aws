@@ -422,7 +422,7 @@ export class CloudWatchLogsConfig implements i.ICloudWatchLogsConfig {
 
 export class RegionConfig implements i.IRegionConfig {
   readonly name: string | undefined = undefined;
-  readonly regions: t.Region[] | undefined = undefined;
+  readonly rollupRegions: t.Region[] | undefined = undefined;
 }
 
 export class LifecycleTransition implements i.ILifecycleTransition {
