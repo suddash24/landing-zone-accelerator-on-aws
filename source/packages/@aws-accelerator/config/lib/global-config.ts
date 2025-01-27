@@ -426,8 +426,8 @@ export class RegionConfig implements i.IRegionConfig {
 }
 
 export class LifecycleTransition implements i.ILifecycleTransition {
-  readonly storageClass: string | undefined = undefined;
-  readonly transitionAfter: number | undefined = undefined;
+  readonly storageClass: string = 'STANDARD_IA';
+  readonly transitionAfter: number = 30;
 }
 
 export class LifecycleExpiration implements i.ILifecycleExpiration {
@@ -440,9 +440,9 @@ export class SecurityLakeLifecycleRule implements i.ISecurityLakeLifecycleRule {
 }
 
 export class SecurityLakeLogSource implements i.ISecurityLakeLogSource {
-  readonly id: string | undefined = undefined;
-  readonly version: string | undefined = undefined;
-  readonly enabled: boolean | undefined = undefined;
+  readonly id: string = '';
+  readonly version: string = '';
+  readonly enabled: boolean = false;
 }
 
 export class SecurityLakeSubscriberIdentity implements i.ISecurityLakeSubscriberIdentity {

@@ -249,6 +249,72 @@ logging:
       - policy: bucket-policies/elb-logs-bucket.json
     lifecycleRules: []
 
+  securityLake:
+    enable: true
+    delegatedAdminAccount: LogArchive
+    regions:
+      - us-east-1
+      - us-west-2
+    
+    # Lifecycle rules following ILifecycleRule schema
+    lifecycleRules:
+      - id: security-lake-lifecycle
+        abortIncompleteMultipartUpload:
+          daysAfterInitiation: 7
+        expiration:
+          days: 730
+        noncurrentVersionExpiration:
+          noncurrentDays: 365
+        transitions:
+          - storageClass: STANDARD_IA
+            transitionAfter: 30
+          - storageClass: INTELLIGENT_TIERING
+            transitionAfter: 90
+          - storageClass: GLACIER
+            transitionAfter: 180
+          - storageClass: DEEP_ARCHIVE
+            transitionAfter: 365
+    
+    # Log sources configuration
+    logSources:
+      - id: ROUTE53
+        version: "1.0"
+        enabled: true
+      - id: VPC_FLOW
+        version: "2.0"
+        enabled: true
+      - id: CLOUD_TRAIL_MGMT
+        version: "1.0"
+        enabled: true
+    
+    # Subscriptions configuration
+    subscriptions:
+      - subscriberName: SecurityTeam
+        subscriberDescription: "Security team access to Security Lake data"
+        accessTypes: 
+          - S3
+          - LAKEFORMATION
+        dataLakeArn: arn:aws:securitylake:us-east-1:111111111111:data-lake/default
+        subscriberIdentity:
+          principal: arn:aws:iam::222222222222:role/SecurityLakeAccess
+          externalId: abcdef123456
+        sources:
+          - id: VPC_FLOW
+            version: "2.0"
+            enabled: true
+          - id: CLOUD_TRAIL_MGMT
+            version: "1.0"
+            enabled: true
+
+    # Optional custom policy overrides
+    customPolicyOverrides:
+      s3Policy: security-lake-bucket-policy.json
+      kmsPolicy: security-lake-kms-policy.json
+
+    # Optional S3 resource policy attachments
+    s3ResourcePolicyAttachments:
+      - policy: security-lake-additional-policy.json
+
   sessionManager:
     sendToCloudWatchLogs: false
     sendToS3: true

@@ -1142,6 +1142,10 @@
           "type": "number"
         }
       },
+      "required": [
+        "storageClass",
+        "transitionAfter"
+      ],
       "type": "object"
     },
     "ILoggingConfig": {
@@ -1429,6 +1433,11 @@
           "type": "string"
         }
       },
+      "required": [
+        "id",
+        "version",
+        "enabled"
+      ],
       "type": "object"
     },
     "ISecurityLakeSubscriberIdentity": {

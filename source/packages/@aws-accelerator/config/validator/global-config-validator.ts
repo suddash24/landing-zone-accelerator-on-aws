@@ -102,6 +102,10 @@ export class GlobalConfigValidator {
     //
     this.validateCloudWatch(values, configDir, ouIdNames, accountNames, errors);
     //
+    // validate security services
+    //
+    this.validateSecurityLake(values, errors);
+    //
     // cloudtrail settings validation
     //
     this.validateCloudTrailSettings(values, errors);
@@ -707,6 +711,153 @@ export class GlobalConfigValidator {
   }
 
   /**
+   * Validate Security lake
+   */
+
+  /**
+   * Validate Security Lake lifecycle rules
+   */
+  private validateSecurityLakeLifecycleRules(values: GlobalConfig, errors: string[]): void {
+    if (!values.logging.securityLake?.lifecycleRules) {
+      return;
+    }
+
+    for (const rule of values.logging.securityLake.lifecycleRules) {
+      // Validate transitions
+      if (rule.transitions) {
+        const transitionDays = rule.transitions.map(t => t.transitionAfter);
+
+        // Validate transition days are in ascending order
+        for (let i = 0; i < transitionDays.length - 1; i++) {
+          if (transitionDays[i] >= transitionDays[i + 1]) {
+            errors.push(`Transition days must be in ascending order in lifecycle rule "${transitionDays[i]}"`);
+          }
+        }
+
+        // Validate each transition has required properties
+        for (const transition of rule.transitions) {
+          if (!transition.storageClass) {
+            errors.push(`Storage class must be specified for transitions in rule "${transition.storageClass}"`);
+          }
+          if (transition.transitionAfter < 0) {
+            errors.push(`Transition days must be a positive number in rule "${transition.storageClass}"`);
+          }
+        }
+      }
+    }
+  }
+
+  private validateLogSources(values: GlobalConfig, errors: string[]): void {
+    const validLogSourceIds = [
+      'ROUTE53',
+      'SH_FINDINGS',
+      'S3_DATA',
+      // 'LAMBDA_EXECUTION',
+      // 'CLOUD_TRAIL_MGMT',
+      // 'VPC_FLOW',
+      // 'EKS_AUDIT',
+      // 'WAF'
+    ];
+
+    if (!values.logging || !values.logging.securityLake || !values.logging.securityLake.logSources) {
+      return;
+    }
+
+    for (const source of values.logging.securityLake.logSources) {
+      if (!validLogSourceIds.includes(source.id)) {
+        errors.push(`Invalid log source ID "${source.id}"`);
+      }
+
+      if (!source.version) {
+        errors.push(`Version must be specified for log source "${source.id}"`);
+      }
+    }
+  }
+
+  /**
+   * Validate storage classes for Security Lake
+   */
+  /**
+   * Validate storage classes for Security Lake
+   */
+  private validateStorageClassesForSecuritylake(values: GlobalConfig, errors: string[]): void {
+    // Early return if any part of the path is undefined
+    if (!values.logging || !values.logging.securityLake || !values.logging.securityLake.lifecycleRules) {
+      return;
+    }
+
+    const validStorageClasses = ['STANDARD_IA', 'INTELLIGENT_TIERING', 'GLACIER', 'DEEP_ARCHIVE'];
+
+    // Now we can safely access lifecycleRules since we've verified it exists
+    for (const lifecycleRule of values.logging.securityLake.lifecycleRules) {
+      if (!lifecycleRule.transitions) {
+        continue;
+      }
+
+      for (const transition of lifecycleRule.transitions) {
+        // Validate storage class exists
+        if (!transition.storageClass) {
+          errors.push(`Storage class must be specified in rule "${lifecycleRule.id}"`);
+        } else if (!validStorageClasses.includes(transition.storageClass)) {
+          errors.push(
+            `Invalid storage class "${transition.storageClass}" in rule "${lifecycleRule.id}". ` +
+              `Valid storage classes are: ${validStorageClasses.join(', ')}`,
+          );
+        }
+      }
+    }
+  }
+
+  /**
+   * Validate Security Lake subscriptions
+   */
+  private validateSecurityLakeSubscriptions(values: GlobalConfig, errors: string[]): void {
+    if (!values.logging.securityLake?.subscriptions) {
+      return;
+    }
+
+    for (const subscription of values.logging.securityLake.subscriptions) {
+      // Validate subscriber name
+      if (!subscription.subscriberName) {
+        errors.push('Subscriber name is required');
+      }
+
+      // Validate access types
+      if (!subscription.accessTypes || subscription.accessTypes.length === 0) {
+        errors.push(`Access types are required for subscriber "${subscription.subscriberName}"`);
+      } else {
+        const validAccessTypes = ['S3', 'LAKEFORMATION'];
+        for (const accessType of subscription.accessTypes) {
+          if (!validAccessTypes.includes(accessType)) {
+            errors.push(
+              `Invalid access type "${accessType}" for subscriber "${subscription.subscriberName}". ` +
+                `Valid types are: ${validAccessTypes.join(', ')}`,
+            );
+          }
+        }
+      }
+
+      // Validate data lake ARN
+      if (!subscription.dataLakeArn) {
+        errors.push(`Data Lake ARN is required for subscriber "${subscription.subscriberName}"`);
+      } else if (!subscription.dataLakeArn.startsWith('arn:aws:')) {
+        errors.push(`Invalid Data Lake ARN format for subscriber "${subscription.subscriberName}"`);
+      }
+
+      // Validate subscriber identity
+      if (subscription.subscriberIdentity) {
+        if (!subscription.subscriberIdentity.principal) {
+          errors.push(`Subscriber principal is required for "${subscription.subscriberName}"`);
+        } else if (!subscription.subscriberIdentity.principal.startsWith('arn:aws:')) {
+          errors.push(`Invalid subscriber principal ARN format for "${subscription.subscriberName}"`);
+        }
+      } else {
+        errors.push(`Subscriber identity is required for "${subscription.subscriberName}"`);
+      }
+    }
+  }
+
+  /**
    * Validate CloudWatch Logs replication
    */
   private validateCloudWatch(
@@ -814,6 +965,20 @@ export class GlobalConfigValidator {
         errors.push(`Not valid Json for Dynamic Partition in CloudWatch logs. ${errorMessage}`);
       }
     }
+  }
+
+  /**
+   * Validate Security Lake configurations
+   */
+  private validateSecurityLake(values: GlobalConfig, errors: string[]): void {
+    // Validate lifecycle rules
+    this.validateSecurityLakeLifecycleRules(values, errors);
+    // Validate log sources
+    this.validateLogSources(values, errors);
+    // Validate storage classes
+    this.validateStorageClassesForSecuritylake(values, errors);
+    //Validate subscriptions
+    this.validateSecurityLakeSubscriptions(values, errors);
   }
 
   private validateSnsTopics(values: GlobalConfig, logger: winston.Logger, errors: string[]) {

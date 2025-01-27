@@ -43,7 +43,7 @@ type FilteredErrors = { [key: string]: string };
 /**
  * Validates the provided content against the given JSON Schema.
  *
- * @param schema The JSON Schema object to validate the content against.
+ * @param schema The JSON Schema object to validate the content againsgft.
  * @param content The content to be validated.
  * @returns An object containing errors found during validation (filtered to ignore certain errors).
  *

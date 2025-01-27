@@ -1243,11 +1243,11 @@ export interface ILifecycleTransition {
   /**
    * Storage class for transition
    */
-  storageClass: string | undefined;
+  storageClass: string;
   /**
    * Number of days after which to transition
    */
-  transitionAfter: number | undefined;
+  transitionAfter: number;
 }
 
 /**
@@ -1281,15 +1281,15 @@ export interface ISecurityLakeLogSource {
   /**
    * Log source identifier
    */
-  id: string | undefined;
+  id: string;
   /**
    * Log source version
    */
-  version: string | undefined;
+  version: string;
   /**
    * Enable log source
    */
-  enabled: boolean | undefined;
+  enabled: boolean;
 }
 
 /**
