@@ -722,7 +722,14 @@ export class GlobalConfigValidator {
       return;
     }
 
+    const ruleNames: string[] = [];
     for (const rule of values.logging.securityLake.lifecycleRules) {
+      // Validate rule ID uniqueness
+      if (ruleNames.includes(rule.id)) {
+        errors.push(`Lifecycle rule IDs must be unique. Duplicate ID found: ${rule.id}`);
+      }
+      ruleNames.push(rule.id);
+
       // Validate transitions
       if (rule.transitions) {
         const transitionDays = rule.transitions.map(t => t.transitionAfter);
@@ -730,17 +737,17 @@ export class GlobalConfigValidator {
         // Validate transition days are in ascending order
         for (let i = 0; i < transitionDays.length - 1; i++) {
           if (transitionDays[i] >= transitionDays[i + 1]) {
-            errors.push(`Transition days must be in ascending order in lifecycle rule "${transitionDays[i]}"`);
+            errors.push(`Transition days must be in ascending order in lifecycle rule "${rule.id}"`);
           }
         }
 
         // Validate each transition has required properties
         for (const transition of rule.transitions) {
           if (!transition.storageClass) {
-            errors.push(`Storage class must be specified for transitions in rule "${transition.storageClass}"`);
+            errors.push(`Storage class must be specified for transitions in rule "${rule.id}"`);
           }
           if (transition.transitionAfter < 0) {
-            errors.push(`Transition days must be a positive number in rule "${transition.storageClass}"`);
+            errors.push(`Transition days must be a positive number in rule "${rule.id}"`);
           }
         }
       }

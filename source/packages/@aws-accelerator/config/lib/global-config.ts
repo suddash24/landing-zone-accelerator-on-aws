@@ -435,8 +435,9 @@ export class LifecycleExpiration implements i.ILifecycleExpiration {
 }
 
 export class SecurityLakeLifecycleRule implements i.ISecurityLakeLifecycleRule {
-  readonly transitions: LifecycleTransition[] | undefined = undefined;
-  readonly expiration: LifecycleExpiration | undefined = undefined;
+  readonly id: string = '';
+  readonly transitions: LifecycleTransition[] = [];
+  readonly expiration: LifecycleExpiration = { days: 0 };
 }
 
 export class SecurityLakeLogSource implements i.ISecurityLakeLogSource {
