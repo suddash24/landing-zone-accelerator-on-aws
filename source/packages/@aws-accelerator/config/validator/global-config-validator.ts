@@ -793,7 +793,14 @@ export class GlobalConfigValidator {
       return;
     }
 
-    const validStorageClasses = ['STANDARD_IA', 'INTELLIGENT_TIERING', 'GLACIER', 'DEEP_ARCHIVE'];
+    const validStorageClasses = [
+      'STANDARD_IA',
+      'INTELLIGENT_TIERING',
+      'GLACIER',
+      'GLACIER_IR',
+      'ONEZONE_IA',
+      'DEEP_ARCHIVE',
+    ];
 
     // Now we can safely access lifecycleRules since we've verified it exists
     for (const lifecycleRule of values.logging.securityLake.lifecycleRules) {
